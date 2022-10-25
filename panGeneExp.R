@@ -1,34 +1,29 @@
-######Video source: https://ke.biowolf.cn
-######ÉúĞÅ×ÔÑ§Íø: https://www.biowolf.cn/
-######Î¢ĞÅ¹«ÖÚºÅ£ºbiowolf_cn
-######ºÏ×÷ÓÊÏä£ºbiowolf@foxmail.com
-######´ğÒÉÎ¢ĞÅ: 18520221056
 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
 #    install.packages("BiocManager")
 #BiocManager::install("limma")
 
 
-library(limma)             #ÒıÓÃ°ü
-geneFile="gene.txt"        #»ùÒòÁĞ±íÎÄ¼ş
-setwd("E:\\desktop\\TP53 family\\03_panGeneExp/")    #ÉèÖÃ¹¤×÷Ä¿Â¼
+library(limma)             #å¼•ç”¨åŒ…
+geneFile="gene.txt"        #åŸºå› åˆ—è¡¨æ–‡ä»¶
+setwd("E:\\desktop\\TP53 family\\03_panGeneExp/")    #è®¾ç½®å·¥ä½œç›®å½•
 
-#¶ÁÈ¡»ùÒòÎÄ¼ş
+#è¯»å–åŸºå› æ–‡ä»¶
 gene=read.table("gene.txt",sep="\t",header=F,check.names=F)
 genelist=as.vector(gene[,1])
 genelist=gsub(" ","",genelist)
 
-#¶ÁÈ¡Ä¿Â¼ÏÂµÄÎÄ¼ş
+#è¯»å–ç›®å½•ä¸‹çš„æ–‡ä»¶
 files=dir()
 files=grep("^symbol.",files,value=T)
 
 outTab=data.frame()
 for(i in files){
-	#¶ÁÈ¡ÎÄ¼ş
+	#è¯»å–æ–‡ä»¶
 	CancerType=gsub("symbol\\.|\\.txt","",i)
 	rt=read.table(i,sep="\t",header=T,check.names=F)
 
-	#Èç¹ûÒ»¸ö»ùÒòÕ¼ÁË¶àĞĞ£¬È¡¾ùÖµ
+	#å¦‚æœä¸€ä¸ªåŸºå› å äº†å¤šè¡Œï¼Œå–å‡å€¼
 	rt=as.matrix(rt)
 	rownames(rt)=rt[,1]
 	exp=rt[,2:ncol(rt)]
@@ -36,22 +31,16 @@ for(i in files){
 	data=matrix(as.numeric(as.matrix(exp)),nrow=nrow(exp),dimnames=dimnames)
 	data=avereps(data)
 
-	#µÃµ½ÑùÆ·µÄType
+	#å¾—åˆ°æ ·å“çš„Type
 	group=sapply(strsplit(colnames(data),"\\-"),"[",4)
 	group=sapply(strsplit(group,""),"[",1)
 	Type=ifelse(group==0,"Tumor","Normal")
 	geneExp=t(data[genelist,])
-	#geneExp=geneExp/data["TBP",]       #ÊÇ·ñ°´ÕÕ³Ö¼Ò»ùÒòTBP¶ÔÊı¾İ½ÃÕı£¬ĞèÒª½ÃÕıÈ¥µôÇ°Ãæ#ºÅ
+	#geneExp=geneExp/data["TBP",]       #æ˜¯å¦æŒ‰ç…§æŒå®¶åŸºå› TBPå¯¹æ•°æ®çŸ«æ­£ï¼Œéœ€è¦çŸ«æ­£å»æ‰å‰é¢#å·
 	outTab=rbind(outTab,cbind(geneExp,Type,CancerType))
 }
 
-#Êä³ö½á¹û±í¸ñ
+#è¾“å‡ºç»“æœè¡¨æ ¼
 out=cbind(ID=row.names(outTab),outTab)
 write.table(out,file="panGeneExp.txt",sep="\t",quote=F,row.names=F)
 
-
-######Video source: https://ke.biowolf.cn
-######ÉúĞÅ×ÔÑ§Íø: https://www.biowolf.cn/
-######Î¢ĞÅ¹«ÖÚºÅ£ºbiowolf_cn
-######ºÏ×÷ÓÊÏä£ºbiowolf@foxmail.com
-######´ğÒÉÎ¢ĞÅ: 18520221056
