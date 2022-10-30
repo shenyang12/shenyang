@@ -1,24 +1,24 @@
 
 #install.packages("ggpubr")
 
-library(ggpubr)               #ÒıÓÃ°ü
-expFile="panGeneExp.txt"      #±í´ïÊäÈëÎÄ¼ş
-setwd("E:\\desktop\\TP53 family\\05_diff")                    #ÉèÖÃ¹¤×÷Ä¿Â¼
-data=read.table(expFile,sep="\t",header=T,check.names=F,row.names=1)     #¶ÁÈ¡ÏäÏßÍ¼ÊäÈëÎÄ¼ş
+library(ggpubr)               #å¼•ç”¨åŒ…
+expFile="panGeneExp.txt"      #è¡¨è¾¾è¾“å…¥æ–‡ä»¶
+setwd("E:\\desktop\\TP53 family\\05_diff")                    #è®¾ç½®å·¥ä½œç›®å½•
+data=read.table(expFile,sep="\t",header=T,check.names=F,row.names=1)     #è¯»å–ç®±çº¿å›¾è¾“å…¥æ–‡ä»¶
 
-#Í³¼ÆÃ¿¸öÖ×ÁöÕı³£ÑùÆ·ÊıÄ¿,ÌôÑ¡Õı³£ÑùÆ·ÊıÄ¿>=5µÄÖ×Áö
+#ç»Ÿè®¡æ¯ä¸ªè‚¿ç˜¤æ­£å¸¸æ ·å“æ•°ç›®,æŒ‘é€‰æ­£å¸¸æ ·å“æ•°ç›®>=5çš„è‚¿ç˜¤
 Normal=data[data[,"Type"]=="Normal",]
 NormalNum=table(Normal[,"CancerType"])
 NormalNum=NormalNum[NormalNum>=5]
 NormalCacner=names(NormalNum)
 data=data[which(data[,"CancerType"] %in% NormalCacner),]
 
-#¶Ô»ùÒò½øĞĞÑ­»·£¬²¢×ö²îÒì·ÖÎö
+#å¯¹åŸºå› è¿›è¡Œå¾ªç¯ï¼Œå¹¶åšå·®å¼‚åˆ†æ
 genelist=colnames(data[,(1:(ncol(data)-2))])
 for(gene in genelist){
 	rt1=data[,c(gene,"Type","CancerType")]
 	colnames(rt1)[1]="expression"
-	#»æÖÆÏäĞÍÍ¼
+	#ç»˜åˆ¶ç®±å‹å›¾
 	p=ggboxplot(rt1, x="CancerType", y="expression", color = "Type",
 	     ylab=paste0(gene," expression"),
 	     xlab="Cancer type",
@@ -28,7 +28,7 @@ for(gene in genelist){
 	      method="wilcox.test",
 	      symnum.args=list(cutpoints = c(0, 0.001, 0.01, 0.05, 1), symbols = c("***", "**", "*", " ")),
 	      label = "p.signif")
-	pdf(file=paste0(gene,".diff.pdf"),width=8,height=5)    #Êä³öÍ¼Æ¬ÎÄ¼ş
+	pdf(file=paste0(gene,".diff.pdf"),width=8,height=5)    #è¾“å‡ºå›¾ç‰‡æ–‡ä»¶
 	print(p1)
 	dev.off()
 }
